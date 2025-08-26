@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">cachorro</string>
+    <string name="title_activity_principal">principal</string>
+    <string name="title_activity_cadastro_pet_perdido">cadastro_pet_perdido</string>
+</resources>
