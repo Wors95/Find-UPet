@@ -1,3 +1,5 @@
+package com.example.cachorro // Substitua pelo seu nome de pacote
+
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -25,36 +27,40 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
-
-val DarkBlue = Color(0xFF2A3F6F)
-val LightGray = Color(0xFFF0F0F0)
+// --- Definição de Cores ---
+val DarkBlues = Color(0xFF2A3F6F)
+val LightGrayForm = Color(0xFFF0F0F0) // Renomeado para não conflitar
 val LightYellow = Color(0xFFFFF9C4)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PetPerdidoScreen() {
-
+fun PetPerdidoScreen(
+    onNavigateBack: () -> Unit
+) {
+    // --- Estados do Formulário ---
+    var tipoPet by remember { mutableStateOf("") }
+    var sexo by remember { mutableStateOf("") }
     var idade by remember { mutableStateOf("") }
     var tamanho by remember { mutableStateOf("") }
     var raca by remember { mutableStateOf("") }
     var cidade by remember { mutableStateOf("") }
     var localDescricao by remember { mutableStateOf("") }
+    var temManchas by remember { mutableStateOf(false) }
+    var temOlhosDiferentes by remember { mutableStateOf(false) }
     var particularidades by remember { mutableStateOf("") }
     var termosAceitos by remember { mutableStateOf(false) }
 
     Scaffold(
         topBar = {
             TopAppBar(
-                title = {
-                    Text("Pet perdido?", fontWeight = FontWeight.Bold)
-                },
+                title = { Text("Pet perdido?", fontWeight = FontWeight.Bold) },
                 navigationIcon = {
-                    IconButton(onClick = {  }) {
+                    IconButton(onClick = onNavigateBack) { // Ação de navegação aqui
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Voltar")
                     }
                 },
                 actions = {
-                    IconButton(onClick = { }) {
+                    IconButton(onClick = { /* TODO: Mostrar ajuda */ }) {
                         Icon(Icons.AutoMirrored.Filled.HelpOutline, contentDescription = "Ajuda")
                     }
                 },
@@ -69,23 +75,16 @@ fun PetPerdidoScreen() {
                 .padding(horizontal = 16.dp)
                 .verticalScroll(rememberScrollState())
         ) {
+            SectionHeader("Informações básicas")
+            SingleChoiceSegment("Tipo de pet", listOf("Cachorro", "Gato"), tipoPet) { tipoPet = it }
+            SingleChoiceSegment("Sexo", listOf("Macho", "Fêmea", "Não sei"), sexo) { sexo = it }
+
             SectionHeader("Características físicas")
-            SingleChoiceSegment(
-                title = "Idade aproximada",
-                options = listOf("Filhote", "Adulto"),
-                selectedOption = idade,
-                onOptionSelected = { idade = it }
-            )
-            SingleChoiceSegment(
-                title = "Tamanho",
-                options = listOf("Pequeno", "Médio", "Grande"),
-                selectedOption = tamanho,
-                onOptionSelected = { tamanho = it }
-            )
+            SingleChoiceSegment("Idade aproximada", listOf("Filhote", "Adulto"), idade) { idade = it }
+            SingleChoiceSegment("Tamanho", listOf("Pequeno", "Médio", "Grande"), tamanho) { tamanho = it }
             SimpleDropdownField(label = "Raça")
             SimpleClickableField(label = "Selecione as cores")
 
-            // --- Seção de Localização ---
             SectionHeader("Onde seu pet foi perdido")
             SimpleDropdownField(label = "Cidade")
             LargeTextField(
@@ -96,8 +95,20 @@ fun PetPerdidoScreen() {
 
             SectionHeader("Características especiais")
             Text("Seu pet possui alguma dessas características?", style = MaterialTheme.typography.bodyMedium)
+            Spacer(Modifier.height(8.dp))
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                FilterChip(
+                    selected = temManchas,
+                    onClick = { temManchas = !temManchas },
+                    label = { Text("Manchas") }
+                )
+                FilterChip(
+                    selected = temOlhosDiferentes,
+                    onClick = { temOlhosDiferentes = !temOlhosDiferentes },
+                    label = { Text("Olhos de cores diferentes") }
+                )
+            }
             Spacer(modifier = Modifier.height(24.dp))
-
             LargeTextField(
                 value = particularidades,
                 onValueChange = { particularidades = it },
@@ -123,28 +134,26 @@ fun PetPerdidoScreen() {
 
             Spacer(modifier = Modifier.height(24.dp))
             Button(
-                onClick = {  },
+                onClick = { /* TODO: Lógica de envio do formulário */ },
                 modifier = Modifier.fillMaxWidth().height(50.dp),
                 shape = RoundedCornerShape(8.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = DarkBlue)
+                colors = ButtonDefaults.buttonColors(containerColor = DarkBlues)
             ) {
                 Text("Vamos encontrar juntos", fontSize = 16.sp)
             }
-            Spacer(modifier = Modifier.height(16.dp)) // Espaço no final da rolagem
+            Spacer(modifier = Modifier.height(16.dp))
         }
     }
 }
 
 
+// --- Componentes do Formulário ---
+
 @Composable
 private fun SectionHeader(title: String) {
     Column {
         Spacer(modifier = Modifier.height(24.dp))
-        Text(
-            text = title,
-            style = MaterialTheme.typography.titleLarge,
-            fontWeight = FontWeight.Bold
-        )
+        Text(text = title, style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
         Spacer(modifier = Modifier.height(16.dp))
     }
 }
@@ -166,7 +175,7 @@ private fun SingleChoiceSegment(
                     onClick = { onOptionSelected(option) },
                     shape = RoundedCornerShape(8.dp),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = if (isSelected) Color.DarkGray else LightGray,
+                        containerColor = if (isSelected) Color.DarkGray else LightGrayForm,
                         contentColor = if (isSelected) Color.White else Color.Black
                     ),
                     elevation = ButtonDefaults.buttonElevation(0.dp)
@@ -182,12 +191,10 @@ private fun SingleChoiceSegment(
 @Composable
 fun SimpleDropdownField(label: String) {
     OutlinedTextField(
-        value = "",
-        onValueChange = {},
-        readOnly = true,
+        value = "", onValueChange = {}, readOnly = true,
         label = { Text(label) },
         trailingIcon = { Icon(Icons.Default.ArrowDropDown, contentDescription = null) },
-        modifier = Modifier.fillMaxWidth().clickable {  },
+        modifier = Modifier.fillMaxWidth().clickable { /* TODO: Abrir dropdown */ },
         shape = RoundedCornerShape(8.dp),
         colors = OutlinedTextFieldDefaults.colors(
             unfocusedContainerColor = Color.White,
@@ -200,11 +207,9 @@ fun SimpleDropdownField(label: String) {
 @Composable
 fun SimpleClickableField(label: String) {
     OutlinedTextField(
-        value = "",
-        onValueChange = {},
-        readOnly = true,
+        value = "", onValueChange = {}, readOnly = true,
         label = { Text(label, color = Color.Gray) },
-        modifier = Modifier.fillMaxWidth().clickable {  },
+        modifier = Modifier.fillMaxWidth().clickable { /* TODO: Abrir seleção de cor */ },
         shape = RoundedCornerShape(8.dp),
         colors = OutlinedTextFieldDefaults.colors(
             unfocusedContainerColor = Color.White,
@@ -217,8 +222,7 @@ fun SimpleClickableField(label: String) {
 @Composable
 fun LargeTextField(value: String, onValueChange: (String) -> Unit, label: String) {
     OutlinedTextField(
-        value = value,
-        onValueChange = onValueChange,
+        value = value, onValueChange = onValueChange,
         label = { Text(label) },
         modifier = Modifier.fillMaxWidth().height(120.dp),
         shape = RoundedCornerShape(8.dp),
@@ -240,16 +244,11 @@ fun WarningBox() {
             .padding(12.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Icon(
-            imageVector = Icons.Default.Warning,
-            contentDescription = "Aviso",
-            tint = Color(0xFFFBC02D)
-        )
+        Icon(imageVector = Icons.Default.Warning, contentDescription = "Aviso", tint = Color(0xFFFBC02D))
         Spacer(modifier = Modifier.width(12.dp))
         Text(
             text = "Sua foto não será exibida se for identificada alguma suspeita de conteúdo sensível, impróprio ou fora das regras da plataforma.",
-            style = MaterialTheme.typography.bodySmall,
-            lineHeight = 16.sp
+            style = MaterialTheme.typography.bodySmall, lineHeight = 16.sp
         )
     }
 }
@@ -257,7 +256,7 @@ fun WarningBox() {
 @Composable
 fun AddPhotoButton() {
     Card(
-        modifier = Modifier.fillMaxWidth().height(80.dp).clickable {  },
+        modifier = Modifier.fillMaxWidth().height(80.dp).clickable { /* TODO: Abrir galeria */ },
         shape = RoundedCornerShape(8.dp),
         border = BorderStroke(1.dp, Color.LightGray),
         colors = CardDefaults.cardColors(containerColor = Color.White)
@@ -308,12 +307,11 @@ fun TermsAndConditionsCheckbox(checked: Boolean, onCheckedChange: (Boolean) -> U
     }
 }
 
-
-
+// --- Preview ---
 @Preview(showBackground = true)
 @Composable
 fun PetPerdidoScreenPreview() {
     MaterialTheme {
-        PetPerdidoScreen()
+        PetPerdidoScreen(onNavigateBack = {})
     }
 }
