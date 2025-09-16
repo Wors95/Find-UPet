@@ -31,20 +31,24 @@ class MainActivity : ComponentActivity() {
                         composable("principal") {
                             EncontreSeuPetScreen(
                                 onNavigateToPetPerdido = {
-                                    // LOG PONTO A
-                                    Log.d("MeuAppNavegacao", "PONTO A: Chamada de navegação em MainActivity EXECUTADA.")
+
                                     navController.navigate("cadastro_pet_perdido")
                                 },
                                 onNavigateToPetEncontrado = {
-                                    // Lógica para o outro botão
+                                    navController.navigate("cadastro_pet_encontrado")
                                 }
                             )
                         }
 
                         composable("cadastro_pet_perdido") {
-                            // LOG PONTO C
-                            Log.d("MeuAppNavegacao", "PONTO C: Tela 'cadastro_pet_perdido' CARREGADA.")
                             PetPerdidoScreen(
+                                onNavigateBack = {
+                                    navController.popBackStack()
+                                }
+                            )
+                        }
+                        composable("cadastro_pet_encontrado") {
+                            PetEncontradoScreen(
                                 onNavigateBack = {
                                     navController.popBackStack()
                                 }

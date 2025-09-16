@@ -1,4 +1,4 @@
-package com.example.cachorro // Substitua pelo seu nome de pacote
+package com.example.cachorro // Verifique se o pacote está correto
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -16,9 +16,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PetPerdidoScreen(
+fun PetEncontradoScreen(
     onNavigateBack: () -> Unit
 ) {
     // --- Estados do Formulário ---
@@ -35,7 +36,7 @@ fun PetPerdidoScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Pet perdido?", fontWeight = FontWeight.Bold) },
+                title = { Text("Viu um pet?", fontWeight = FontWeight.Bold) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Voltar")
@@ -67,7 +68,7 @@ fun PetPerdidoScreen(
             SimpleDropdownField(label = "Raça")
             SimpleClickableField(label = "Selecione as cores")
 
-            SectionHeader("Onde seu pet foi perdido")
+            SectionHeader("Onde o pet foi visto")
             SimpleDropdownField(label = "Cidade")
             LargeTextField(
                 value = localDescricao,
@@ -76,7 +77,7 @@ fun PetPerdidoScreen(
             )
 
             SectionHeader("Características especiais")
-            Text("Seu pet possui alguma dessas características?", style = MaterialTheme.typography.bodyMedium)
+            Text("O pet que você viu possui alguma dessas características?", style = MaterialTheme.typography.bodyMedium)
             Spacer(Modifier.height(8.dp))
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 FilterChip(
@@ -94,10 +95,10 @@ fun PetPerdidoScreen(
             LargeTextField(
                 value = particularidades,
                 onValueChange = { particularidades = it },
-                label = "Conte sobre particularidades do seu pet (comportamento, hábitos, etc.)"
+                label = "Conte sobre particularidades do pet (comportamento, coleira, etc.)"
             )
 
-            SectionHeader("Fotos do seu pet")
+            SectionHeader("Fotos do pet que você viu")
             Text(
                 text = "Para que seu anúncio tenha melhor alcance e siga as regras da plataforma, envie apenas fotos recentes e bem iluminadas do pet do anúncio. É proibido incluir pessoas ou outros animais e, se necessário, edite a imagem para focar no rosto e corpo do pet, facilitando sua identificação.",
                 style = MaterialTheme.typography.bodySmall,
@@ -121,7 +122,7 @@ fun PetPerdidoScreen(
                 shape = RoundedCornerShape(8.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = DarkBlues)
             ) {
-                Text("Vamos encontrar juntos", fontSize = 16.sp)
+                Text("Publicar Avistamento", fontSize = 16.sp)
             }
             Spacer(modifier = Modifier.height(16.dp))
         }
@@ -131,8 +132,8 @@ fun PetPerdidoScreen(
 // --- Preview ---
 @Preview(showBackground = true)
 @Composable
-fun PetPerdidoScreenPreview() {
+fun PetEncontradoScreenPreview() {
     MaterialTheme {
-        PetPerdidoScreen(onNavigateBack = {})
+        PetEncontradoScreen(onNavigateBack = {})
     }
 }
