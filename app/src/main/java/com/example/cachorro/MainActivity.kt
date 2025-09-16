@@ -1,6 +1,7 @@
-package com.example.cachorro // Verifique se o pacote está correto
+package com.example.cachorro
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
@@ -10,44 +11,40 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.cachorro.ui.theme.CachorroTheme // Substitua pelo nome do seu tema
+import com.example.cachorro.ui.theme.CachorroTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            CachorroTheme { // Substitua pelo nome do seu tema
+            CachorroTheme {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    // 1. Cria o controlador de navegação
                     val navController = rememberNavController()
 
-                    // 2. Cria o host que vai exibir as telas
                     NavHost(
                         navController = navController,
-                        startDestination = "principal.kt" // Define a rota da primeira tela a ser exibida
+                        startDestination = "principal"
                     ) {
-                        // 3. Define a primeira rota: "principal"
                         composable("principal") {
                             EncontreSeuPetScreen(
-                                // Ação para quando clicar em "Perdi meu Pet!"
                                 onNavigateToPetPerdido = {
-                                    navController.navigate("cadastro_pet_perdido.kt")
+                                    // LOG PONTO A
+                                    Log.d("MeuAppNavegacao", "PONTO A: Chamada de navegação em MainActivity EXECUTADA.")
+                                    navController.navigate("cadastro_pet_perdido")
                                 },
-                                // Ação para quando clicar em "Vi seu Pet!"
                                 onNavigateToPetEncontrado = {
-                                    // TODO: Criar a tela e a rota para "pet encontrado"
-                                    // navController.navigate("cadastro_pet_encontrado")
+                                    // Lógica para o outro botão
                                 }
                             )
                         }
 
-                        // 4. Define a segunda rota: "cadastro_pet_perdido"
                         composable("cadastro_pet_perdido") {
+                            // LOG PONTO C
+                            Log.d("MeuAppNavegacao", "PONTO C: Tela 'cadastro_pet_perdido' CARREGADA.")
                             PetPerdidoScreen(
-                                // Ação para quando clicar no botão de voltar na TopAppBar
                                 onNavigateBack = {
                                     navController.popBackStack()
                                 }

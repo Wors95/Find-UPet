@@ -168,7 +168,7 @@ private fun AcoesPrincipais(onPerdiMeuPetClick: () -> Unit, onViSeuPetClick: () 
         horizontalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         Button(
-            onClick = onPerdiMeuPetClick,
+            onClick = { onPerdiMeuPetClick() },
             modifier = Modifier.weight(1f).height(80.dp),
             shape = RoundedCornerShape(12.dp),
             colors = ButtonDefaults.buttonColors(containerColor = DarkBlue)

@@ -55,7 +55,7 @@ fun PetPerdidoScreen(
             TopAppBar(
                 title = { Text("Pet perdido?", fontWeight = FontWeight.Bold) },
                 navigationIcon = {
-                    IconButton(onClick = onNavigateBack) { // Ação de navegação aqui
+                    IconButton(onClick = onNavigateBack) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Voltar")
                     }
                 },
