@@ -1,4 +1,4 @@
-package com.example.cachorro // Substitua pelo seu nome de pacote
+package com.example.cachorro
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -26,8 +26,8 @@ fun PetPerdidoScreen(
     var sexo by remember { mutableStateOf("") }
     var idade by remember { mutableStateOf("") }
     var tamanho by remember { mutableStateOf("") }
-    var raca by remember { mutableStateOf("") }       // <-- ADICIONE ESTA
-    var cores by remember { mutableStateOf("") }      // <-- ADICIONE ESTA
+    var raca by remember { mutableStateOf("") }
+    var cores by remember { mutableStateOf("") }
     var cidade by remember { mutableStateOf("") }
     var localDescricao by remember { mutableStateOf("") }
     var temManchas by remember { mutableStateOf(false) }
@@ -93,7 +93,7 @@ fun PetPerdidoScreen(
             )
             Spacer(modifier = Modifier.height(16.dp))
 
-            SectionHeader("Onde seu pet foi perdido") // Ou "Onde o pet foi visto"
+            SectionHeader("Onde seu pet foi perdido")
 
             OutlinedTextField(
                 value = cidade,
@@ -153,22 +153,30 @@ fun PetPerdidoScreen(
 
             Spacer(modifier = Modifier.height(24.dp))
             Button(
-                onClick = { val novoPet = PetRepository.criarPetComFormulario(
-                    nome = "Pet Perdido", // Placeholder, pois o nome não está no form
-                    tipoPet = tipoPet,
-                    sexo = sexo,
-                    tamanho = tamanho,
-                    raca = raca,
-                    cidade = cidade,
-                    localDescricao = localDescricao
-                )
+                onClick = {
+                    val caracteristicas = mutableListOf<String>()
+                    if (temManchas) caracteristicas.add("Manchas")
+                    if (temOlhosDiferentes) caracteristicas.add("Olhos de cores diferentes")
+
+                    val novoPet = PetRepository.criarPetComFormulario(
+                        nome = "Pet Perdido",
+                        sexo = sexo,
+                        raca = raca,
+                        cidade = cidade,
+                        localDescricao = localDescricao,
+                        porte = tamanho,
+                        cor = cores,
+                        idade = idade,
+                        descricao = particularidades,
+                        caracteristicas = caracteristicas
+                    )
                     PetRepository.addPet(novoPet)
 
-                    // Após adicionar, volta para a tela principal
-                    onNavigateBack() },
+                    onNavigateBack()
+                },
                 modifier = Modifier.fillMaxWidth().height(50.dp),
                 shape = RoundedCornerShape(8.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = DarkBlues)
+                colors = ButtonDefaults.buttonColors(containerColor = DarkBlue)
             ) {
                 Text("Vamos encontrar juntos", fontSize = 16.sp)
             }
@@ -177,7 +185,6 @@ fun PetPerdidoScreen(
     }
 }
 
-// --- Preview ---
 @Preview(showBackground = true)
 @Composable
 fun PetPerdidoScreenPreview() {

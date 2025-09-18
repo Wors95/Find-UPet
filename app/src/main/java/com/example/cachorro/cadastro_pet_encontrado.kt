@@ -1,4 +1,4 @@
-package com.example.cachorro // Verifique se o pacote está correto
+package com.example.cachorro
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -94,7 +94,7 @@ fun PetEncontradoScreen(
             )
             Spacer(modifier = Modifier.height(16.dp))
 
-            SectionHeader("Onde seu pet foi perdido") // Ou "Onde o pet foi visto"
+            SectionHeader("Onde o pet foi visto")
 
             OutlinedTextField(
                 value = cidade,
@@ -152,24 +152,34 @@ fun PetEncontradoScreen(
                 onCheckedChange = { termosAceitos = it }
             )
 
+
+
             Spacer(modifier = Modifier.height(24.dp))
             Button(
-                onClick = { val novoPet = PetRepository.criarPetComFormulario(
-                    nome = "Pet Perdido", // Placeholder, pois o nome não está no form
-                    tipoPet = tipoPet,
-                    sexo = sexo,
-                    tamanho = tamanho,
-                    raca = raca,
-                    cidade = cidade,
-                    localDescricao = localDescricao.take(30) // Pegamos os 30 primeiros caracteres como localização
-                )
+                onClick = {
+                    val caracteristicas = mutableListOf<String>()
+                    if (temManchas) caracteristicas.add("Manchas")
+                    if (temOlhosDiferentes) caracteristicas.add("Olhos de cores diferentes")
+
+                    val novoPet = PetRepository.criarPetComFormulario(
+                        nome = "Vi seu Pet",
+                        sexo = sexo,
+                        raca = raca,
+                        cidade = cidade,
+                        localDescricao = localDescricao,
+                        porte = tamanho,
+                        cor = cores,
+                        idade = idade,
+                        descricao = particularidades,
+                        caracteristicas = caracteristicas
+                    )
                     PetRepository.addPet(novoPet)
 
-                    // Após adicionar, volta para a tela principal
-                    onNavigateBack() },
+                    onNavigateBack()
+                },
                 modifier = Modifier.fillMaxWidth().height(50.dp),
                 shape = RoundedCornerShape(8.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = DarkBlues)
+                colors = ButtonDefaults.buttonColors(containerColor = DarkBlue)
             ) {
                 Text("Publicar Avistamento", fontSize = 16.sp)
             }
@@ -178,7 +188,6 @@ fun PetEncontradoScreen(
     }
 }
 
-// --- Preview ---
 @Preview(showBackground = true)
 @Composable
 fun PetEncontradoScreenPreview() {

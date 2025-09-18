@@ -10,5 +10,11 @@ data class Pet(
     val sexo: String,
     val local: String,
     val tempo: String,
-    val imageResId: Int // Usando Int para recursos drawable. Em um app real, seria uma String de URL.
+    val imageResId: Int,
+    val porte: String,
+    val cor: String,
+    val idade: String, // "Filhote", "Adulto"
+    val descricao: String,
+    val caracteristicas: List<String> // Ex: "Olhos de cores diferentes"
 )
+// Usando Int para recursos drawable. Em um app real, seria uma String de URL.

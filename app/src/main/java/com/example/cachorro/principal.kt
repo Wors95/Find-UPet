@@ -1,4 +1,4 @@
-package com.example.cachorro // Substitua pelo seu nome de pacote
+package com.example.cachorro
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
@@ -18,14 +18,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
-
 
 // --- Definição de Cores ---
 val DarkBlue = Color(0xFF2A3F6F)
@@ -37,12 +35,12 @@ val LightGray = Color(0xFFF0F0F0)
 @Composable
 fun EncontreSeuPetScreen(
     onNavigateToPetPerdido: () -> Unit,
-    onNavigateToPetEncontrado: () -> Unit
+    onNavigateToPetEncontrado: () -> Unit,
+    onNavigateToPetDetail: (Int) -> Unit // Parâmetro para navegar para os detalhes
 ) {
     var textoBusca by remember { mutableStateOf("") }
     var filtroSelecionado by remember { mutableStateOf("Todos") }
 
-    // Dados de exemplo para a lista (substitua por dados reais do seu ViewModel)
     val pets = PetRepository.getPets()
 
     Scaffold(
@@ -50,7 +48,7 @@ fun EncontreSeuPetScreen(
             TopAppBar(
                 title = {
                     Image(
-                        painter = painterResource(id = R.drawable.logo), // Certifique-se de ter um logo em res/drawable
+                        painter = painterResource(id = R.drawable.logo),
                         contentDescription = "Logo Encontre Seu Pet",
                         modifier = Modifier.height(32.dp)
                     )
@@ -113,7 +111,10 @@ fun EncontreSeuPetScreen(
             // --- Lista de Pets ---
             LazyColumn(contentPadding = PaddingValues(horizontal = 16.dp)) {
                 items(pets) { pet ->
-                    PetCard(pet = pet)
+                    PetCard(
+                        pet = pet,
+                        onVerDetalhesClick = { onNavigateToPetDetail(pet.id) }
+                    )
                 }
             }
         }
@@ -198,7 +199,7 @@ private fun AcoesPrincipais(onPerdiMeuPetClick: () -> Unit, onViSeuPetClick: () 
 // --- Card Reutilizável para a Lista ---
 
 @Composable
-fun PetCard(pet: Pet) {
+fun PetCard(pet: Pet, onVerDetalhesClick: () -> Unit) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -207,16 +208,13 @@ fun PetCard(pet: Pet) {
         elevation = CardDefaults.cardElevation(2.dp),
         colors = CardDefaults.cardColors(containerColor = Color.White)
     ) {
-        // Usamos ConstraintLayout para ter controle total sobre o posicionamento
         ConstraintLayout(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(12.dp)
         ) {
-            // 1. Criamos referências (IDs) para cada elemento da UI
             val (image, textColumn, button) = createRefs()
 
-            // 2. Posicionamos a Imagem
             Image(
                 painter = painterResource(id = pet.imageResId),
                 contentDescription = "Foto do ${pet.nome}",
@@ -231,9 +229,8 @@ fun PetCard(pet: Pet) {
                 contentScale = ContentScale.Crop
             )
 
-            // 3. Posicionamos o Botão
             Button(
-                onClick = { /* TODO: Navegar para detalhes do pet */ },
+                onClick = { onVerDetalhesClick() },
                 shape = RoundedCornerShape(8.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = DarkBlue),
                 modifier = Modifier.constrainAs(button) {
@@ -245,20 +242,15 @@ fun PetCard(pet: Pet) {
                 Text("Ver detalhes")
             }
 
-            // 4. Posicionamos a Coluna de Textos ENTRE a imagem e o botão
             Column(
                 modifier = Modifier.constrainAs(textColumn) {
-                    // Começa no final da imagem com uma margem
                     start.linkTo(image.end, margin = 16.dp)
-                    // Termina no início do botão com uma margem
                     end.linkTo(button.start, margin = 8.dp)
                     top.linkTo(parent.top)
                     bottom.linkTo(parent.bottom)
-                    // Esta é a mágica: a largura preenche o espaço definido pelas constraints
                     width = Dimension.fillToConstraints
                 }
             ) {
-                // O conteúdo da coluna agora respeitará os limites
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically,
@@ -313,10 +305,13 @@ fun PetCard(pet: Pet) {
     }
 }
 
-
 // --- Preview ---
 @Preview(showBackground = true)
 @Composable
 fun EncontreSeuPetScreenPreview() {
-    EncontreSeuPetScreen(onNavigateToPetPerdido = {}, onNavigateToPetEncontrado = {})
+    EncontreSeuPetScreen(
+        onNavigateToPetPerdido = {},
+        onNavigateToPetEncontrado = {},
+        onNavigateToPetDetail = {}
+    )
 }
