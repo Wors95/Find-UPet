@@ -18,9 +18,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.constraintlayout.compose.Dimension
+
 
 // --- Definição de Cores ---
 val DarkBlue = Color(0xFF2A3F6F)
@@ -38,12 +43,7 @@ fun EncontreSeuPetScreen(
     var filtroSelecionado by remember { mutableStateOf("Todos") }
 
     // Dados de exemplo para a lista (substitua por dados reais do seu ViewModel)
-    val petsDeExemplo = listOf(
-        Pet(1, "Vi seu Pet", "Shih Tzu", "Macho", "Londrina - Ouro Verde", "Agora mesmo", R.drawable.pet1),
-        Pet(2, "Vi seu Pet", "Sem Raça Definida (SRD)", "Fêmea", "São José dos Pinhais", "Agora mesmo", R.drawable.pet2),
-        Pet(3, "Fiona", "Sem Raça Definida (SRD)", "Fêmea", "Piraquara", "Agora mesmo", R.drawable.pet3),
-        Pet(4, "Mima", "Sem Raça Definida (SRD)", "Fêmea", "Francisco Beltrão - Vila Nova", "Agora mesmo", R.drawable.pet4)
-    )
+    val pets = PetRepository.getPets()
 
     Scaffold(
         topBar = {
@@ -112,7 +112,7 @@ fun EncontreSeuPetScreen(
 
             // --- Lista de Pets ---
             LazyColumn(contentPadding = PaddingValues(horizontal = 16.dp)) {
-                items(petsDeExemplo) { pet ->
+                items(pets) { pet ->
                     PetCard(pet = pet)
                 }
             }
@@ -200,45 +200,114 @@ private fun AcoesPrincipais(onPerdiMeuPetClick: () -> Unit, onViSeuPetClick: () 
 @Composable
 fun PetCard(pet: Pet) {
     Card(
-        modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 8.dp),
         shape = RoundedCornerShape(12.dp),
         elevation = CardDefaults.cardElevation(2.dp),
         colors = CardDefaults.cardColors(containerColor = Color.White)
     ) {
-        Row(
-            modifier = Modifier.padding(12.dp),
-            verticalAlignment = Alignment.CenterVertically
+        // Usamos ConstraintLayout para ter controle total sobre o posicionamento
+        ConstraintLayout(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(12.dp)
         ) {
+            // 1. Criamos referências (IDs) para cada elemento da UI
+            val (image, textColumn, button) = createRefs()
+
+            // 2. Posicionamos a Imagem
             Image(
                 painter = painterResource(id = pet.imageResId),
                 contentDescription = "Foto do ${pet.nome}",
-                modifier = Modifier.size(80.dp).clip(CircleShape),
+                modifier = Modifier
+                    .size(80.dp)
+                    .clip(CircleShape)
+                    .constrainAs(image) {
+                        start.linkTo(parent.start)
+                        top.linkTo(parent.top)
+                        bottom.linkTo(parent.bottom)
+                    },
                 contentScale = ContentScale.Crop
             )
-            Spacer(modifier = Modifier.width(16.dp))
-            Column(modifier = Modifier.weight(1f)) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text(pet.nome, fontWeight = FontWeight.Bold, fontSize = 18.sp)
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text(pet.tempo, color = Color.Gray, fontSize = 12.sp)
-                }
-                Text(pet.raca, fontSize = 14.sp, color = Color.DarkGray)
-                Spacer(modifier = Modifier.height(4.dp))
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Icon(Icons.Default.Female, contentDescription = "Sexo", modifier = Modifier.size(16.dp), tint = Color.Gray)
-                    Text(pet.sexo, fontSize = 14.sp, color = Color.Gray, modifier = Modifier.padding(start = 4.dp))
-                }
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Icon(Icons.Default.LocationOn, contentDescription = "Local", modifier = Modifier.size(16.dp), tint = Color.Gray)
-                    Text(pet.local, fontSize = 14.sp, color = Color.Gray, modifier = Modifier.padding(start = 4.dp))
-                }
-            }
+
+            // 3. Posicionamos o Botão
             Button(
                 onClick = { /* TODO: Navegar para detalhes do pet */ },
                 shape = RoundedCornerShape(8.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = DarkBlue)
+                colors = ButtonDefaults.buttonColors(containerColor = DarkBlue),
+                modifier = Modifier.constrainAs(button) {
+                    end.linkTo(parent.end)
+                    top.linkTo(parent.top)
+                    bottom.linkTo(parent.bottom)
+                }
             ) {
                 Text("Ver detalhes")
+            }
+
+            // 4. Posicionamos a Coluna de Textos ENTRE a imagem e o botão
+            Column(
+                modifier = Modifier.constrainAs(textColumn) {
+                    // Começa no final da imagem com uma margem
+                    start.linkTo(image.end, margin = 16.dp)
+                    // Termina no início do botão com uma margem
+                    end.linkTo(button.start, margin = 8.dp)
+                    top.linkTo(parent.top)
+                    bottom.linkTo(parent.bottom)
+                    // Esta é a mágica: a largura preenche o espaço definido pelas constraints
+                    width = Dimension.fillToConstraints
+                }
+            ) {
+                // O conteúdo da coluna agora respeitará os limites
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text(
+                        text = pet.nome,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 18.sp,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier.weight(1f, fill = false)
+                    )
+                    Text(
+                        text = pet.tempo,
+                        color = Color.Gray,
+                        fontSize = 12.sp
+                    )
+                }
+                Text(
+                    text = pet.raca,
+                    fontSize = 14.sp,
+                    color = Color.DarkGray,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+                Spacer(modifier = Modifier.height(4.dp))
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(Icons.Default.Female, contentDescription = "Sexo", modifier = Modifier.size(16.dp), tint = Color.Gray)
+                    Text(
+                        text = pet.sexo,
+                        fontSize = 14.sp,
+                        color = Color.Gray,
+                        modifier = Modifier.padding(start = 4.dp),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(Icons.Default.LocationOn, contentDescription = "Local", modifier = Modifier.size(16.dp), tint = Color.Gray)
+                    Text(
+                        text = pet.local,
+                        fontSize = 14.sp,
+                        color = Color.Gray,
+                        modifier = Modifier.padding(start = 4.dp),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
             }
         }
     }

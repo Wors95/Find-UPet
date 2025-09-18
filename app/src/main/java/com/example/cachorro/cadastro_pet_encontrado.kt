@@ -27,6 +27,9 @@ fun PetEncontradoScreen(
     var sexo by remember { mutableStateOf("") }
     var idade by remember { mutableStateOf("") }
     var tamanho by remember { mutableStateOf("") }
+    var raca by remember { mutableStateOf("") }
+    var cores by remember { mutableStateOf("") }
+    var cidade by remember { mutableStateOf("") }
     var localDescricao by remember { mutableStateOf("") }
     var temManchas by remember { mutableStateOf(false) }
     var temOlhosDiferentes by remember { mutableStateOf(false) }
@@ -65,11 +68,45 @@ fun PetEncontradoScreen(
             SectionHeader("Características físicas")
             SingleChoiceSegment("Idade aproximada", listOf("Filhote", "Adulto"), idade) { idade = it }
             SingleChoiceSegment("Tamanho", listOf("Pequeno", "Médio", "Grande"), tamanho) { tamanho = it }
-            SimpleDropdownField(label = "Raça")
-            SimpleClickableField(label = "Selecione as cores")
+            OutlinedTextField(
+                value = raca,
+                onValueChange = { raca = it },
+                label = { Text("Raça") },
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(8.dp),
+                colors = OutlinedTextFieldDefaults.colors(
+                    unfocusedContainerColor = Color.White,
+                    focusedContainerColor = Color.White
+                )
+            )
+            Spacer(modifier = Modifier.height(16.dp))
 
-            SectionHeader("Onde o pet foi visto")
-            SimpleDropdownField(label = "Cidade")
+            OutlinedTextField(
+                value = cores,
+                onValueChange = { cores = it },
+                label = { Text("Cores do pet") },
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(8.dp),
+                colors = OutlinedTextFieldDefaults.colors(
+                    unfocusedContainerColor = Color.White,
+                    focusedContainerColor = Color.White
+                )
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+
+            SectionHeader("Onde seu pet foi perdido") // Ou "Onde o pet foi visto"
+
+            OutlinedTextField(
+                value = cidade,
+                onValueChange = { cidade = it },
+                label = { Text("Cidade") },
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(8.dp),
+                colors = OutlinedTextFieldDefaults.colors(
+                    unfocusedContainerColor = Color.White,
+                    focusedContainerColor = Color.White
+                )
+            )
             LargeTextField(
                 value = localDescricao,
                 onValueChange = { localDescricao = it },
@@ -117,7 +154,19 @@ fun PetEncontradoScreen(
 
             Spacer(modifier = Modifier.height(24.dp))
             Button(
-                onClick = { /* TODO: Lógica de envio do formulário */ },
+                onClick = { val novoPet = PetRepository.criarPetComFormulario(
+                    nome = "Pet Perdido", // Placeholder, pois o nome não está no form
+                    tipoPet = tipoPet,
+                    sexo = sexo,
+                    tamanho = tamanho,
+                    raca = raca,
+                    cidade = cidade,
+                    localDescricao = localDescricao.take(30) // Pegamos os 30 primeiros caracteres como localização
+                )
+                    PetRepository.addPet(novoPet)
+
+                    // Após adicionar, volta para a tela principal
+                    onNavigateBack() },
                 modifier = Modifier.fillMaxWidth().height(50.dp),
                 shape = RoundedCornerShape(8.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = DarkBlues)

@@ -50,7 +50,8 @@ android {
         implementation(libs.androidx.ui.tooling.preview)
         implementation(libs.androidx.material.icons.extended)
         implementation(libs.androidx.material3)
-        implementation(libs.androidx.navigation.compose.v277) // Verifique sempre a versão mais recente
+        implementation(libs.androidx.navigation.compose.v277)
+        implementation(libs.androidx.constraintlayout.compose.android)
 
 
         testImplementation(libs.junit)
