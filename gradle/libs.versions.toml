@@ -1,5 +1,5 @@
 [versions]
-agp = "8.11.1"
+agp = "8.12.3"
 constraintlayoutCompose = "1.1.1"
 kotlin = "2.0.21"
 coreKtx = "1.16.0"
@@ -14,7 +14,7 @@ navigationComposeJvmstubs = "2.9.4"
 navigationComposeAndroid = "2.9.4"
 navigationComposeVersion = "2.7.7"
 constraintlayoutComposeAndroid = "1.1.1"
-
+ksp = "1.9.22-1.0.17"
 [libraries]
 androidx-constraintlayout-compose = { module = "androidx.constraintlayout:constraintlayout-compose", version.ref = "constraintlayoutCompose" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -42,4 +42,4 @@ androidx-constraintlayout-compose-android = { group = "androidx.constraintlayout
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
-
+google-ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }

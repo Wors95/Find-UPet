@@ -10,7 +10,69 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.HelpOutline
-import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material.icons.filled.Location// anote/cole em: PetDetailScreen.kt
+
+package com.example.cachorro
+
+import android.content.Context
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import androidx.lifecycle.viewmodel.compose.viewModel
+// ... (importe todos os outros componentes necessários)
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun PetDetailScreen(
+    petViewModel: PetViewModel = viewModel(),
+    pet: Pet,
+    onNavigateBack: () -> Unit,
+    onNavigateToEdit: (Int) -> Unit
+) {
+    fun getDrawableResourceId(name: String, context: Context): Int {
+        return context.resources.getIdentifier(name, "drawable", context.packageName)
+    }
+
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text(pet.nome, fontWeight = FontWeight.Bold) },
+                navigationIcon = { /* ... */ },
+                actions = {
+                    IconButton(onClick = { onNavigateToEdit(pet.id) }) {
+                        Icon(Icons.Default.Edit, contentDescription = "Editar")
+                    }
+                    IconButton(onClick = {
+                        petViewModel.deletePet(pet.id)
+                        onNavigateBack()
+                    }) {
+                        Icon(Icons.Default.Delete, contentDescription = "Deletar")
+                    }
+                },
+                // ...
+            )
+        },
+        // ...
+    ) { paddingValues ->
+        Column(
+            modifier = Modifier.padding(paddingValues).fillMaxSize().verticalScroll(rememberScrollState())
+        ) {
+            Image(
+                painter = painterResource(id = getDrawableResourceId(pet.imageName, LocalContext.current)),
+                // ...
+            )
+            Column(modifier = Modifier.padding(16.dp)) {
+                // ...
+                Text(
+                    text = "Perdido ${getTempoFormatado(pet.createdAt)}",
+                    // ...
+                )
+                // ...
+            }
+        }
+    }
+}
+// Cole o resto do arquivo (SectionDetail, InfoColumn) sem alterações...On
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
