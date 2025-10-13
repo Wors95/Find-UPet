@@ -1,4 +1,5 @@
 
+
 package com.example.cachorro
 
 import android.content.Context
@@ -8,7 +9,7 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 
 @Database(entities = [Pet::class], version = 1)
-@TypeConverters(Converters::class) // Precisamos disso para salvar a lista de 'caracteristicas'
+@TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
 
     abstract fun petDao(): PetDao

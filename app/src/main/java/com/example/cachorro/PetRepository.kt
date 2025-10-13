@@ -1,9 +1,7 @@
-// anote/cole em: PetRepository.kt
+
 
 package com.example.cachorro
 
-// --- MUDANÇA SIGNIFICATIVA ---
-// O repositório agora depende do DAO para acessar o banco de dados.
 class PetRepository(private val petDao: PetDao) {
 
     fun getAllPets() = petDao.getAllPets()
@@ -19,10 +17,8 @@ class PetRepository(private val petDao: PetDao) {
         }
     }
 
-    // A função de criar o pet agora retorna o objeto Pet
-    // para ser inserido pelo ViewModel.
     fun criarPetComFormulario(
-        id: Int = 0, // Incluímos o ID para o caso de edição
+        id: Int = 0,
         nome: String,
         sexo: String,
         raca: String,
@@ -33,7 +29,7 @@ class PetRepository(private val petDao: PetDao) {
         idade: String,
         descricao: String,
         caracteristicas: List<String>,
-        imageName: String? = null // Para manter a imagem ao editar
+        imageName: String? = null
     ): Pet {
         val randomImageName = listOf("pet1", "pet2", "pet3", "pet4").random()
         val localCompleto = "$cidade - $localDescricao".take(40)
@@ -49,7 +45,7 @@ class PetRepository(private val petDao: PetDao) {
             idade = idade,
             descricao = descricao,
             caracteristicas = caracteristicas,
-            imageName = imageName ?: randomImageName, // Usa a imagem existente ou uma nova
+            imageName = imageName ?: randomImageName,
             createdAt = System.currentTimeMillis()
         )
     }

@@ -1,4 +1,4 @@
-// anote/cole em: MainActivity.kt
+
 
 package com.example.cachorro
 
@@ -7,6 +7,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -42,7 +43,6 @@ class MainActivity : ComponentActivity() {
                     ) { backStackEntry ->
                         val petId = backStackEntry.arguments?.getInt("petId") ?: 0
 
-                        // Encontra o pet na lista do ViewModel
                         val pets by petViewModel.allPets.collectAsState()
                         val pet = pets.find { it.id == petId }
 

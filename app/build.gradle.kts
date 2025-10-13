@@ -1,19 +1,20 @@
-// anote/cole em: build.gradle.kts (MÓDULO :app)
+
 
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.google.ksp)
+    alias(libs.plugins.kotlin.compose)
 }
 
 android {
     namespace = "com.example.cachorro"
-    compileSdk = 34
+    compileSdk = 35 // <-- MUDOU DE 34 PARA 35
 
     defaultConfig {
         applicationId = "com.example.cachorro"
         minSdk = 24
-        targetSdk = 34
+        targetSdk = 35 // <-- MUDOU DE 34 PARA 35
         versionCode = 1
         versionName = "1.0"
 
@@ -41,9 +42,6 @@ android {
     }
     buildFeatures {
         compose = true
-    }
-    composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.14"
     }
     packaging {
         resources {

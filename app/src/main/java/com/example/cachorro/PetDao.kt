@@ -1,29 +1,24 @@
-// anote/cole em: pet.kt
+
 
 package com.example.cachorro
 
-import androidx.room.Entity
-import androidx.room.PrimaryKey
+import androidx.room.Dao
+import androidx.room.Delete
+import androidx.room.Query
+import androidx.room.Upsert
+import kotlinx.coroutines.flow.Flow
 
-// --- MUDANÇA SIGNIFICATIVA ---
-// Agora esta classe representa uma tabela no banco de dados.
-@Entity(tableName = "pets")
-data class Pet(
-    @PrimaryKey(autoGenerate = true)
-    val id: Int = 0, // O ID agora é gerado pelo banco de dados
-    val nome: String,
-    val raca: String,
-    val sexo: String,
-    val local: String,
-    val porte: String,
-    val cor: String,
-    val idade: String,
-    val descricao: String,
-    val caracteristicas: List<String>,
+@Dao
+interface PetDao {
+    @Upsert
+    suspend fun upsertPet(pet: Pet)
 
-    // Não salvamos o resource ID, mas o nome da imagem. É mais flexível.
-    val imageName: String,
+    @Delete
+    suspend fun deletePet(pet: Pet)
 
-    // É uma boa prática salvar quando o registro foi criado.
-    val createdAt: Long = System.currentTimeMillis()
-)
+    @Query("SELECT * FROM pets WHERE id = :id")
+    suspend fun getPetById(id: Int): Pet?
+
+    @Query("SELECT * FROM pets ORDER BY createdAt DESC")
+    fun getAllPets(): Flow<List<Pet>>
+}

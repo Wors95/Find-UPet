@@ -1,4 +1,4 @@
-// anote/cole em: principal.kt
+
 
 package com.example.cachorro
 
@@ -45,12 +45,32 @@ fun EncontreSeuPetScreen(
     var textoBusca by remember { mutableStateOf("") }
     var filtroSelecionado by remember { mutableStateOf("Todos") }
 
-    // --- MUDANÇA SIGNIFICATIVA ---
-    // A lista de pets agora vem do ViewModel e se atualiza sozinha.
     val pets by petViewModel.allPets.collectAsState()
 
     Scaffold(
-        // ... (o TopAppBar continua o mesmo)
+        topBar = {
+            TopAppBar(
+                title = {
+                    Image(
+                        painter = painterResource(id = R.drawable.logo),
+                        contentDescription = "Logo Encontre Seu Pet",
+                        modifier = Modifier.height(32.dp)
+                    )
+                },
+                navigationIcon = {
+                    IconButton(onClick = { /* TODO: Ação de voltar, se aplicável */ }) {
+                        Icon(imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Voltar")
+                    }
+                },
+                actions = {
+                    IconButton(onClick = { /* TODO: Navegar para Perfil */ }) {
+                        Icon(imageVector = Icons.Default.Person, contentDescription = "Perfil")
+                    }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.White)
+            )
+        },
+        containerColor = Color.White
     ) { paddingValues ->
         Column(
             modifier = Modifier
@@ -58,13 +78,38 @@ fun EncontreSeuPetScreen(
                 .fillMaxSize()
         ) {
             Column(modifier = Modifier.padding(horizontal = 16.dp)) {
-                // ... (a parte de busca e filtros continua a mesma)
-
+                Spacer(modifier = Modifier.height(16.dp))
+                BuscaHeader()
+                Spacer(modifier = Modifier.height(16.dp))
+                OutlinedTextField(
+                    value = textoBusca,
+                    onValueChange = { textoBusca = it },
+                    placeholder = { Text("Buscar por nome, raça, localização...") },
+                    leadingIcon = { Icon(Icons.Default.Search, contentDescription = "Ícone de busca") },
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(12.dp),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedBorderColor = TealGreen,
+                        unfocusedBorderColor = Color.LightGray
+                    )
+                )
+                Spacer(modifier = Modifier.height(12.dp))
+                FiltroPets(
+                    filtroSelecionado = filtroSelecionado,
+                    onFiltroChange = { filtroSelecionado = it }
+                )
+                Spacer(modifier = Modifier.height(24.dp))
                 AcoesPrincipais(
                     onPerdiMeuPetClick = onNavigateToPetForm,
                     onViSeuPetClick = onNavigateToPetForm
                 )
-                // ...
+                Spacer(modifier = Modifier.height(32.dp))
+                Text(
+                    text = "Últimas publicações",
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.Bold
+                )
+                Spacer(modifier = Modifier.height(8.dp))
             }
 
             if (pets.isEmpty()) {
@@ -73,7 +118,7 @@ fun EncontreSeuPetScreen(
                 }
             } else {
                 LazyColumn(contentPadding = PaddingValues(horizontal = 16.dp)) {
-                    items(pets) { pet ->
+                    items(items = pets, key = { it.id }) { pet ->
                         PetCard(
                             pet = pet,
                             onVerDetalhesClick = { onNavigateToPetDetail(pet.id) }
@@ -84,53 +129,219 @@ fun EncontreSeuPetScreen(
         }
     }
 }
-//... O resto do arquivo (BuscaHeader, FiltroPets, AcoesPrincipais) continua igual
 
-// --- MUDANÇA SIGNIFICATIVA NO PetCard ---
 @Composable
-fun PetCard(pet: Pet, onVerDetalhesClick: () -> Unit) {
-    // Função para converter o nome da imagem (String) em um ID de drawable (Int)
-    fun getDrawableResourceId(name: String, context: Context): Int {
-        return context.resources.getIdentifier(name, "drawable", context.packageName)
+private fun BuscaHeader() {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Text(
+            text = "Buscar pets",
+            style = MaterialTheme.typography.headlineSmall,
+            fontWeight = FontWeight.Bold
+        )
+        TextButton(onClick = { /* TODO: Navegar para busca avançada */ }) {
+            Text(text = "Busca avançada →", color = MaterialTheme.colorScheme.primary)
+        }
     }
+}
 
-    Card( /* ... */ ) {
-        ConstraintLayout( /* ... */ ) {
-            val (image, textColumn, button) = createRefs()
-
-            Image(
-                painter = painterResource(id = getDrawableResourceId(pet.imageName, LocalContext.current)),
-                // ...
-            )
-            // ...
-            Column( /* ... */ ) {
-                // ...
-                Text(
-                    text = getTempoFormatado(pet.createdAt), // Usamos o tempo formatado
-                    color = Color.Gray,
-                    fontSize = 12.sp
-                )
-                // ...
+@Composable
+private fun FiltroPets(filtroSelecionado: String, onFiltroChange: (String) -> Unit) {
+    val filtros = listOf("Todos", "Cachorro", "Gato")
+    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+        filtros.forEach { filtro ->
+            val isSelected = filtro == filtroSelecionado
+            Button(
+                onClick = { onFiltroChange(filtro) },
+                shape = RoundedCornerShape(8.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = if (isSelected) TealGreen else LightGray,
+                    contentColor = if (isSelected) Color.White else Color.Gray
+                ),
+                elevation = ButtonDefaults.buttonElevation(0.dp)
+            ) {
+                Text(text = filtro)
             }
         }
     }
 }
 
-// Função para calcular o tempo decorrido
+@Composable
+private fun AcoesPrincipais(onPerdiMeuPetClick: () -> Unit, onViSeuPetClick: () -> Unit) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        Button(
+            onClick = { onPerdiMeuPetClick() },
+            modifier = Modifier
+                .weight(1f)
+                .height(80.dp),
+            shape = RoundedCornerShape(12.dp),
+            colors = ButtonDefaults.buttonColors(containerColor = DarkBlue)
+        ) {
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Icon(imageVector = Icons.Default.Warning, contentDescription = null)
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(text = "Perdi meu Pet!", fontSize = 16.sp)
+            }
+        }
+        Button(
+            onClick = onViSeuPetClick,
+            modifier = Modifier
+                .weight(1f)
+                .height(80.dp),
+            shape = RoundedCornerShape(12.dp),
+            colors = ButtonDefaults.buttonColors(containerColor = TealGreen)
+        ) {
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Icon(imageVector = Icons.Default.Search, contentDescription = null)
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(text = "Vi seu Pet!", fontSize = 16.sp)
+            }
+        }
+    }
+}
+
+@Composable
+fun PetCard(pet: Pet, onVerDetalhesClick: () -> Unit) {
+    fun getDrawableResourceId(name: String, context: Context): Int {
+        val resourceId = context.resources.getIdentifier(name, "drawable", context.packageName)
+        return if (resourceId == 0) R.drawable.logo else resourceId
+    }
+
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 8.dp),
+        shape = RoundedCornerShape(12.dp),
+        elevation = CardDefaults.cardElevation(2.dp),
+        colors = CardDefaults.cardColors(containerColor = Color.White)
+    ) {
+        ConstraintLayout(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(12.dp)
+        ) {
+            val (image, textColumn, button) = createRefs()
+
+            Image(
+                painter = painterResource(id = getDrawableResourceId(pet.imageName, LocalContext.current)),
+                contentDescription = "Foto do ${pet.nome}",
+                modifier = Modifier
+                    .size(80.dp)
+                    .clip(CircleShape)
+                    .constrainAs(image) {
+                        start.linkTo(parent.start)
+                        top.linkTo(parent.top)
+                        bottom.linkTo(parent.bottom)
+                    },
+                contentScale = ContentScale.Crop
+            )
+
+            Button(
+                onClick = { onVerDetalhesClick() },
+                shape = RoundedCornerShape(8.dp),
+                colors = ButtonDefaults.buttonColors(containerColor = DarkBlue),
+                modifier = Modifier.constrainAs(button) {
+                    end.linkTo(parent.end)
+                    top.linkTo(parent.top)
+                    bottom.linkTo(parent.bottom)
+                }
+            ) {
+                Text("Ver detalhes")
+            }
+
+            Column(
+                modifier = Modifier.constrainAs(textColumn) {
+                    start.linkTo(image.end, margin = 16.dp)
+                    end.linkTo(button.start, margin = 8.dp)
+                    top.linkTo(parent.top)
+                    bottom.linkTo(parent.bottom)
+                    width = Dimension.fillToConstraints
+                }
+            ) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text(
+                        text = pet.nome,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 18.sp,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier.weight(1f, fill = false)
+                    )
+                    Text(
+                        text = getTempoFormatado(pet.createdAt),
+                        color = Color.Gray,
+                        fontSize = 12.sp
+                    )
+                }
+                Text(
+                    text = pet.raca,
+                    fontSize = 14.sp,
+                    color = Color.DarkGray,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+                Spacer(modifier = Modifier.height(4.dp))
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(Icons.Default.Female, contentDescription = "Sexo", modifier = Modifier.size(16.dp), tint = Color.Gray)
+                    Text(
+                        text = pet.sexo,
+                        fontSize = 14.sp,
+                        color = Color.Gray,
+                        modifier = Modifier.padding(start = 4.dp),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(Icons.Default.LocationOn, contentDescription = "Local", modifier = Modifier.size(16.dp), tint = Color.Gray)
+                    Text(
+                        text = pet.local,
+                        fontSize = 14.sp,
+                        color = Color.Gray,
+                        modifier = Modifier.padding(start = 4.dp),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
+            }
+        }
+    }
+}
+
 fun getTempoFormatado(timestamp: Long): String {
     val agora = System.currentTimeMillis()
     val diferenca = agora - timestamp
 
     val segundos = TimeUnit.MILLISECONDS.toSeconds(diferenca)
-    val minutos = TimeUnit.MILLISECONDS.toMinutes(diferenca)
-    val horas = TimeUnit.MILLISECONDS.toHours(diferenca)
-    val dias = TimeUnit.MILLISECONDS.toDays(diferenca)
+    if (segundos < 60) return "Agora mesmo"
 
-    return when {
-        segundos < 60 -> "Agora mesmo"
-        minutos < 60 -> "Há $minutos min"
-        horas < 24 -> "Há $horas h"
-        else -> "Há $dias dias"
+    val minutos = TimeUnit.MILLISECONDS.toMinutes(diferenca)
+    if (minutos < 60) return "Há $minutos min"
+
+    val horas = TimeUnit.MILLISECONDS.toHours(diferenca)
+    if (horas < 24) return "Há $horas h"
+
+    val dias = TimeUnit.MILLISECONDS.toDays(diferenca)
+    return "Há $dias dias"
+}
+
+@Preview(showBackground = true)
+@Composable
+fun EncontreSeuPetScreenPreview() {
+    MaterialTheme {
+        EncontreSeuPetScreen(
+            onNavigateToPetForm = {},
+            onNavigateToPetDetail = {}
+        )
     }
 }
-// Cole todo o restante do arquivo principal.kt aqui, sem alterações...
