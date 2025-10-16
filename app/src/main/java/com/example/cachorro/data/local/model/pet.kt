@@ -1,6 +1,4 @@
-
-
-package com.example.cachorro
+package com.example.cachorro.data.local.model
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey

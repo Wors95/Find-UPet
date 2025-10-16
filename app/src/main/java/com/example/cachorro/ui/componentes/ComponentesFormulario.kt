@@ -1,4 +1,6 @@
-package com.example.cachorro
+// Localização: ui/componentes/ComponentesFormulario.kt
+
+package com.example.cachorro.ui.componentes // <-- A CORREÇÃO ESTÁ AQUI
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
@@ -24,13 +26,9 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
-// --- Definição de Cores para os componentes ---
 val DarkBlues = Color(0xFF2A3F6F)
 val LightGrayForm = Color(0xFFF0F0F0)
 val LightYellow = Color(0xFFFFF9C4)
-
-
-// --- Componentes do Formulário (agora públicos) ---
 
 @Composable
 fun SectionHeader(title: String) {
@@ -72,42 +70,13 @@ fun SingleChoiceSegment(
 }
 
 @Composable
-fun SimpleDropdownField(label: String) {
-    OutlinedTextField(
-        value = "", onValueChange = {}, readOnly = true,
-        label = { Text(label) },
-        trailingIcon = { Icon(Icons.Default.ArrowDropDown, contentDescription = null) },
-        modifier = Modifier.fillMaxWidth().clickable { /* TODO: Abrir dropdown */ },
-        shape = RoundedCornerShape(8.dp),
-        colors = OutlinedTextFieldDefaults.colors(
-            unfocusedContainerColor = Color.White,
-            focusedContainerColor = Color.White
-        )
-    )
-    Spacer(modifier = Modifier.height(16.dp))
-}
-
-@Composable
-fun SimpleClickableField(label: String) {
-    OutlinedTextField(
-        value = "", onValueChange = {}, readOnly = true,
-        label = { Text(label, color = Color.Gray) },
-        modifier = Modifier.fillMaxWidth().clickable { /* TODO: Abrir seleção de cor */ },
-        shape = RoundedCornerShape(8.dp),
-        colors = OutlinedTextFieldDefaults.colors(
-            unfocusedContainerColor = Color.White,
-            focusedContainerColor = Color.White
-        )
-    )
-    Spacer(modifier = Modifier.height(16.dp))
-}
-
-@Composable
 fun LargeTextField(value: String, onValueChange: (String) -> Unit, label: String) {
     OutlinedTextField(
         value = value, onValueChange = onValueChange,
         label = { Text(label) },
-        modifier = Modifier.fillMaxWidth().height(120.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(120.dp),
         shape = RoundedCornerShape(8.dp),
         colors = OutlinedTextFieldDefaults.colors(
             unfocusedContainerColor = Color.White,
@@ -139,7 +108,10 @@ fun WarningBox() {
 @Composable
 fun AddPhotoButton() {
     Card(
-        modifier = Modifier.fillMaxWidth().height(80.dp).clickable { /* TODO: Abrir galeria */ },
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(80.dp)
+            .clickable { /* TODO: Abrir galeria */ },
         shape = RoundedCornerShape(8.dp),
         border = BorderStroke(1.dp, Color.LightGray),
         colors = CardDefaults.cardColors(containerColor = Color.White)

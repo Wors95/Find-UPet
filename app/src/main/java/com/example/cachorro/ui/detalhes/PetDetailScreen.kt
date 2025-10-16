@@ -1,6 +1,4 @@
-
-
-package com.example.cachorro
+package com.example.cachorro.ui.detalhes
 
 import android.content.Context
 import androidx.compose.foundation.Image
@@ -26,6 +24,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.cachorro.R
+import com.example.cachorro.data.local.model.Pet
+import com.example.cachorro.ui.formulario.PetViewModel
+import com.example.cachorro.ui.principal.DarkBlue
+import com.example.cachorro.ui.principal.getTempoFormatado
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

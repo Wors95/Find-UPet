@@ -1,11 +1,12 @@
+// Localização: data/local/PetDao.kt
 
-
-package com.example.cachorro
+package com.example.cachorro.data.local // <-- A linha mais importante!
 
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Query
 import androidx.room.Upsert
+import com.example.cachorro.data.local.model.Pet
 import kotlinx.coroutines.flow.Flow
 
 @Dao

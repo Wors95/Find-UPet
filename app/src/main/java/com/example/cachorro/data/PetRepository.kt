@@ -1,6 +1,7 @@
+package com.example.cachorro.data
 
-
-package com.example.cachorro
+import com.example.cachorro.data.local.PetDao
+import com.example.cachorro.data.local.model.Pet
 
 class PetRepository(private val petDao: PetDao) {
 

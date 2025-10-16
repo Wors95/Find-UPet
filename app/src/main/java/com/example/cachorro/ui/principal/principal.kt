@@ -1,6 +1,4 @@
-
-
-package com.example.cachorro
+package com.example.cachorro.ui.principal
 
 import android.content.Context
 import androidx.compose.foundation.Image
@@ -29,6 +27,9 @@ import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.cachorro.R
+import com.example.cachorro.data.local.model.Pet
+import com.example.cachorro.ui.formulario.PetViewModel
 import java.util.concurrent.TimeUnit
 
 val DarkBlue = Color(0xFF2A3F6F)
