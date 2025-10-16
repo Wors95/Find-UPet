@@ -1,3 +1,5 @@
+// Localização: ui/principal/principal.kt
+
 package com.example.cachorro.ui.principal
 
 import android.content.Context
@@ -44,9 +46,12 @@ fun EncontreSeuPetScreen(
     onNavigateToPetDetail: (Int) -> Unit
 ) {
     var textoBusca by remember { mutableStateOf("") }
-    var filtroSelecionado by remember { mutableStateOf("Todos") }
 
-    val pets by petViewModel.allPets.collectAsState()
+    // --- MUDANÇAS AQUI ---
+    // A lista de pets agora vem da nova variável 'petsFiltrados'
+    val pets by petViewModel.petsFiltrados.collectAsState()
+    // O filtro selecionado agora é controlado pelo ViewModel
+    val filtroSelecionado by petViewModel.filtroSelecionado.collectAsState()
 
     Scaffold(
         topBar = {
@@ -59,12 +64,12 @@ fun EncontreSeuPetScreen(
                     )
                 },
                 navigationIcon = {
-                    IconButton(onClick = { /* TODO: Ação de voltar, se aplicável */ }) {
+                    IconButton(onClick = { /* TODO */ }) {
                         Icon(imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Voltar")
                     }
                 },
                 actions = {
-                    IconButton(onClick = { /* TODO: Navegar para Perfil */ }) {
+                    IconButton(onClick = { /* TODO */ }) {
                         Icon(imageVector = Icons.Default.Person, contentDescription = "Perfil")
                     }
                 },
@@ -95,10 +100,14 @@ fun EncontreSeuPetScreen(
                     )
                 )
                 Spacer(modifier = Modifier.height(12.dp))
+
+                // --- MUDANÇA AQUI ---
+                // O FiltroPets agora chama a função do ViewModel
                 FiltroPets(
                     filtroSelecionado = filtroSelecionado,
-                    onFiltroChange = { filtroSelecionado = it }
+                    onFiltroChange = { petViewModel.atualizarFiltro(it) }
                 )
+
                 Spacer(modifier = Modifier.height(24.dp))
                 AcoesPrincipais(
                     onPerdiMeuPetClick = onNavigateToPetForm,
@@ -115,7 +124,7 @@ fun EncontreSeuPetScreen(
 
             if (pets.isEmpty()) {
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    Text("Nenhum pet cadastrado ainda.")
+                    Text("Nenhum pet encontrado com este filtro.")
                 }
             } else {
                 LazyColumn(contentPadding = PaddingValues(horizontal = 16.dp)) {
@@ -130,6 +139,8 @@ fun EncontreSeuPetScreen(
         }
     }
 }
+// ... O resto do arquivo (BuscaHeader, FiltroPets, etc.) continua igual.
+// Colei o arquivo completo para garantir.
 
 @Composable
 private fun BuscaHeader() {
@@ -143,7 +154,7 @@ private fun BuscaHeader() {
             style = MaterialTheme.typography.headlineSmall,
             fontWeight = FontWeight.Bold
         )
-        TextButton(onClick = { /* TODO: Navegar para busca avançada */ }) {
+        TextButton(onClick = { /* TODO */ }) {
             Text(text = "Busca avançada →", color = MaterialTheme.colorScheme.primary)
         }
     }

@@ -1,3 +1,5 @@
+// Localização: no pacote raiz com.example.cachorro
+
 package com.example.cachorro
 
 import android.os.Bundle
@@ -44,7 +46,9 @@ class MainActivity : ComponentActivity() {
                     ) { backStackEntry ->
                         val petId = backStackEntry.arguments?.getInt("petId") ?: 0
 
-                        val pets by petViewModel.allPets.collectAsState()
+                        // --- A CORREÇÃO ESTÁ AQUI ---
+                        // Usamos 'petsFiltrados' em vez de 'allPets'
+                        val pets by petViewModel.petsFiltrados.collectAsState()
                         val pet = pets.find { it.id == petId }
 
                         if (pet != null) {

@@ -1,3 +1,5 @@
+// Localização: data/PetRepository.kt
+
 package com.example.cachorro.data
 
 import com.example.cachorro.data.local.PetDao
@@ -21,6 +23,7 @@ class PetRepository(private val petDao: PetDao) {
     fun criarPetComFormulario(
         id: Int = 0,
         nome: String,
+        tipo: String, // <-- PARÂMETRO ADICIONADO
         sexo: String,
         raca: String,
         cidade: String,
@@ -38,6 +41,7 @@ class PetRepository(private val petDao: PetDao) {
         return Pet(
             id = id,
             nome = nome,
+            tipo = tipo, // <-- CAMPO ADICIONADO
             raca = raca,
             sexo = sexo,
             local = localCompleto,

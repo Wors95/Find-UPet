@@ -15,7 +15,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.cachorro.ui.componentes.* // <-- A CORREÇÃO ESTÁ AQUI
+import com.example.cachorro.ui.componentes.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -62,7 +62,12 @@ fun PetPerdidoScreen(
             Spacer(Modifier.height(16.dp))
 
             SectionHeader("Informações básicas")
+            // --- CONECTANDO O SELETOR DE TIPO ---
+            SingleChoiceSegment("Tipo de pet", listOf("Cachorro", "Gato"), uiState.tipo) { petViewModel.updateTipo(it) }
             SingleChoiceSegment("Sexo", listOf("Macho", "Fêmea", "Não sei"), uiState.sexo) { petViewModel.updateSexo(it) }
+
+            // ... O resto do arquivo continua exatamente igual ...
+            // (pode copiar e colar o resto do seu arquivo aqui se preferir)
 
             SectionHeader("Características físicas")
             SingleChoiceSegment("Idade", listOf("Filhote", "Adulto"), uiState.idade) { petViewModel.updateIdade(it) }
@@ -121,7 +126,7 @@ fun PetPerdidoScreen(
                     onNavigateBack()
                 },
                 modifier = Modifier.fillMaxWidth().height(50.dp),
-                enabled = uiState.termosAceitos && uiState.nome.isNotBlank()
+                enabled = uiState.termosAceitos && uiState.nome.isNotBlank() && uiState.tipo.isNotBlank()
             ) {
                 Text(textoBotao, fontSize = 16.sp)
             }

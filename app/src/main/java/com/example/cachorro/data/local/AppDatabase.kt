@@ -1,3 +1,5 @@
+// Localização: data/local/AppDatabase.kt
+
 package com.example.cachorro.data.local
 
 import android.content.Context
@@ -7,7 +9,7 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import com.example.cachorro.data.local.model.Pet
 
-@Database(entities = [Pet::class], version = 1)
+@Database(entities = [Pet::class], version = 2) // <-- VERSÃO ATUALIZADA
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
 
@@ -23,7 +25,9 @@ abstract class AppDatabase : RoomDatabase() {
                     context.applicationContext,
                     AppDatabase::class.java,
                     "pet_database"
-                ).build()
+                )
+                    .fallbackToDestructiveMigration() // <-- LINHA ADICIONADA
+                    .build()
                 INSTANCE = instance
                 instance
             }

@@ -1,4 +1,4 @@
-// Localização final: ui/formulario/PetViewModel.kt
+// Localização: ui/formulario/PetViewModel.kt
 
 package com.example.cachorro.ui.formulario
 
@@ -12,14 +12,15 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-// Classe que representa o estado da tela do formulário
 data class PetFormUiState(
     val id: Int = 0,
     val nome: String = "",
+    val tipo: String = "", // <-- CAMPO ADICIONADO
     val raca: String = "",
     val sexo: String = "",
     val cidade: String = "",
@@ -39,8 +40,14 @@ class PetViewModel(application: Application) : AndroidViewModel(application) {
 
     private val repository: PetRepository
 
-    // StateFlow para a lista principal
-    val allPets: StateFlow<List<Pet>>
+    // StateFlows para a lista e para o filtro
+    private val _allPets: StateFlow<List<Pet>>
+    private val _filtroSelecionado = MutableStateFlow("Todos")
+    val filtroSelecionado: StateFlow<String> = _filtroSelecionado.asStateFlow()
+
+    // --- NOVA LÓGICA DE FILTRO ---
+    // A UI vai observar este StateFlow, que é a combinação da lista completa com o filtro atual
+    val petsFiltrados: StateFlow<List<Pet>>
 
     // StateFlow para o estado do formulário
     private val _formUiState = MutableStateFlow(PetFormUiState())
@@ -50,16 +57,36 @@ class PetViewModel(application: Application) : AndroidViewModel(application) {
         val petDao = AppDatabase.getDatabase(application).petDao()
         repository = PetRepository(petDao)
 
-        allPets = repository.getAllPets()
+        _allPets = repository.getAllPets()
             .stateIn(
                 scope = viewModelScope,
                 started = SharingStarted.WhileSubscribed(5000),
                 initialValue = emptyList()
             )
+
+        // Combina a lista de pets com o filtro para gerar a lista filtrada
+        petsFiltrados = combine(_allPets, _filtroSelecionado) { pets, filtro ->
+            when (filtro) {
+                "Todos" -> pets
+                "Cachorro" -> pets.filter { it.tipo == "Cachorro" }
+                "Gato" -> pets.filter { it.tipo == "Gato" }
+                else -> pets
+            }
+        }.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = emptyList()
+        )
     }
 
-    // Funções para a UI chamar quando o usuário interagir
+    // --- NOVA FUNÇÃO PÚBLICA ---
+    fun atualizarFiltro(novoFiltro: String) {
+        _filtroSelecionado.value = novoFiltro
+    }
+
+    // Funções para a UI do formulário chamar
     fun updateNome(nome: String) { _formUiState.update { it.copy(nome = nome) } }
+    fun updateTipo(tipo: String) { _formUiState.update { it.copy(tipo = tipo) } } // <-- NOVA FUNÇÃO
     fun updateRaca(raca: String) { _formUiState.update { it.copy(raca = raca) } }
     fun updateSexo(sexo: String) { _formUiState.update { it.copy(sexo = sexo) } }
     fun updateCidade(cidade: String) { _formUiState.update { it.copy(cidade = cidade) } }
@@ -72,7 +99,6 @@ class PetViewModel(application: Application) : AndroidViewModel(application) {
     fun toggleOlhosDiferentes() { _formUiState.update { it.copy(temOlhosDiferentes = !it.temOlhosDiferentes) } }
     fun updateTermos(aceitos: Boolean) { _formUiState.update { it.copy(termosAceitos = aceitos) } }
 
-    // Carrega um pet existente para o estado do formulário
     fun loadPetParaEdicao(petId: Int) {
         viewModelScope.launch {
             val pet = repository.getPetById(petId)
@@ -80,6 +106,7 @@ class PetViewModel(application: Application) : AndroidViewModel(application) {
                 _formUiState.value = PetFormUiState(
                     id = it.id,
                     nome = it.nome,
+                    tipo = it.tipo, // <-- CAMPO ADICIONADO
                     raca = it.raca,
                     sexo = it.sexo,
                     cidade = it.local.substringBefore(" -").trim(),
@@ -98,12 +125,10 @@ class PetViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    // Limpa o formulário para um novo cadastro
     fun resetFormState() {
         _formUiState.value = PetFormUiState()
     }
 
-    // Salva o pet (novo ou editado) no banco de dados
     fun savePet() {
         viewModelScope.launch {
             val currentState = formUiState.value
@@ -114,6 +139,7 @@ class PetViewModel(application: Application) : AndroidViewModel(application) {
             val pet = repository.criarPetComFormulario(
                 id = currentState.id,
                 nome = currentState.nome,
+                tipo = currentState.tipo, // <-- CAMPO ADICIONADO
                 sexo = currentState.sexo,
                 raca = currentState.raca,
                 cidade = currentState.cidade,
@@ -129,7 +155,6 @@ class PetViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    // Funções privadas que interagem com o repositório
     private suspend fun addOrUpdatePet(pet: Pet) { repository.addOrUpdatePet(pet) }
     fun deletePet(id: Int) { viewModelScope.launch { repository.deletePetById(id) } }
 }

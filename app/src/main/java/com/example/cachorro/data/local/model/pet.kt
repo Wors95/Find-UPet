@@ -1,3 +1,5 @@
+// Localização: data/local/model/pet.kt
+
 package com.example.cachorro.data.local.model
 
 import androidx.room.Entity
@@ -8,6 +10,7 @@ data class Pet(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
     val nome: String,
+    val tipo: String,
     val raca: String,
     val sexo: String,
     val local: String,
