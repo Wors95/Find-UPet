@@ -17,7 +17,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -35,8 +34,6 @@ import com.example.cachorro.ui.formulario.PetViewModel
 import com.example.cachorro.ui.theme.CachorroTheme
 import java.util.concurrent.TimeUnit
 
-// Removendo as cores globais daqui. Elas agora vivem no tema.
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EncontreSeuPetScreen(
@@ -44,10 +41,10 @@ fun EncontreSeuPetScreen(
     onNavigateToPetForm: () -> Unit,
     onNavigateToPetDetail: (Int) -> Unit
 ) {
-    var textoBusca by remember { mutableStateOf("") }
-
+    // A tela agora observa todos os estados do ViewModel
     val pets by petViewModel.petsFiltrados.collectAsState()
     val filtroSelecionado by petViewModel.filtroSelecionado.collectAsState()
+    val textoBusca by petViewModel.textoBusca.collectAsState() // <-- NOVO ESTADO OBSERVADO
 
     Scaffold(
         topBar = {
@@ -69,10 +66,9 @@ fun EncontreSeuPetScreen(
                         Icon(imageVector = Icons.Default.Person, contentDescription = "Perfil")
                     }
                 }
-                // As cores agora são controladas pelo tema do Scaffold
             )
         },
-        containerColor = MaterialTheme.colorScheme.background // Usando cor do tema
+        containerColor = MaterialTheme.colorScheme.background
     ) { paddingValues ->
         Column(
             modifier = Modifier
@@ -83,18 +79,22 @@ fun EncontreSeuPetScreen(
                 Spacer(modifier = Modifier.height(16.dp))
                 BuscaHeader()
                 Spacer(modifier = Modifier.height(16.dp))
+
+                // --- MUDANÇA PRINCIPAL AQUI ---
+                // O TextField agora é controlado 100% pelo ViewModel
                 OutlinedTextField(
                     value = textoBusca,
-                    onValueChange = { textoBusca = it },
+                    onValueChange = { petViewModel.atualizarTextoBusca(it) },
                     placeholder = { Text("Buscar por nome, raça, localização...") },
                     leadingIcon = { Icon(Icons.Default.Search, contentDescription = "Ícone de busca") },
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(12.dp),
                     colors = OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = MaterialTheme.colorScheme.secondary, // Usando cor do tema
+                        focusedBorderColor = MaterialTheme.colorScheme.secondary,
                         unfocusedBorderColor = MaterialTheme.colorScheme.outline
                     )
                 )
+
                 Spacer(modifier = Modifier.height(12.dp))
 
                 FiltroPets(
@@ -133,6 +133,8 @@ fun EncontreSeuPetScreen(
         }
     }
 }
+// ... O resto do arquivo (BuscaHeader, PetCard, etc.) continua exatamente igual.
+// Código completo abaixo para garantir.
 
 @Composable
 private fun BuscaHeader() {
@@ -185,7 +187,7 @@ private fun AcoesPrincipais(onPerdiMeuPetClick: () -> Unit, onViSeuPetClick: () 
                 .weight(1f)
                 .height(80.dp),
             shape = RoundedCornerShape(12.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary) // Usando cor do tema
+            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
         ) {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Icon(imageVector = Icons.Default.Warning, contentDescription = null)
@@ -199,7 +201,7 @@ private fun AcoesPrincipais(onPerdiMeuPetClick: () -> Unit, onViSeuPetClick: () 
                 .weight(1f)
                 .height(80.dp),
             shape = RoundedCornerShape(12.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.secondary) // Usando cor do tema
+            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.secondary)
         ) {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Icon(imageVector = Icons.Default.Search, contentDescription = null)
@@ -223,7 +225,7 @@ fun PetCard(pet: Pet, onVerDetalhesClick: () -> Unit) {
             .padding(vertical = 8.dp),
         shape = RoundedCornerShape(12.dp),
         elevation = CardDefaults.cardElevation(2.dp),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface) // Usando cor do tema
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
     ) {
         ConstraintLayout(
             modifier = Modifier
@@ -249,7 +251,7 @@ fun PetCard(pet: Pet, onVerDetalhesClick: () -> Unit) {
             Button(
                 onClick = { onVerDetalhesClick() },
                 shape = RoundedCornerShape(8.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary), // Usando cor do tema
+                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
                 modifier = Modifier.constrainAs(button) {
                     end.linkTo(parent.end)
                     top.linkTo(parent.top)
@@ -283,35 +285,35 @@ fun PetCard(pet: Pet, onVerDetalhesClick: () -> Unit) {
                     )
                     Text(
                         text = getTempoFormatado(pet.createdAt),
-                        color = MaterialTheme.colorScheme.onSurfaceVariant, // Usando cor do tema
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                         fontSize = 12.sp
                     )
                 }
                 Text(
                     text = pet.raca,
                     fontSize = 14.sp,
-                    color = MaterialTheme.colorScheme.onSurface, // Usando cor do tema
+                    color = MaterialTheme.colorScheme.onSurface,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Icon(Icons.Default.Female, contentDescription = "Sexo", modifier = Modifier.size(16.dp), tint = MaterialTheme.colorScheme.onSurfaceVariant) // Usando cor do tema
+                    Icon(Icons.Default.Female, contentDescription = "Sexo", modifier = Modifier.size(16.dp), tint = MaterialTheme.colorScheme.onSurfaceVariant)
                     Text(
                         text = pet.sexo,
                         fontSize = 14.sp,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant, // Usando cor do tema
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.padding(start = 4.dp),
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
                     )
                 }
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Icon(Icons.Default.LocationOn, contentDescription = "Local", modifier = Modifier.size(16.dp), tint = MaterialTheme.colorScheme.onSurfaceVariant) // Usando cor do tema
+                    Icon(Icons.Default.LocationOn, contentDescription = "Local", modifier = Modifier.size(16.dp), tint = MaterialTheme.colorScheme.onSurfaceVariant)
                     Text(
                         text = pet.local,
                         fontSize = 14.sp,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant, // Usando cor do tema
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.padding(start = 4.dp),
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
