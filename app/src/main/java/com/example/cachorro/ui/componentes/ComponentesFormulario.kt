@@ -1,6 +1,6 @@
 // Localização: ui/componentes/ComponentesFormulario.kt
 
-package com.example.cachorro.ui.componentes // <-- A CORREÇÃO ESTÁ AQUI
+package com.example.cachorro.ui.componentes
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
@@ -10,7 +10,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -26,15 +25,18 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
-val DarkBlues = Color(0xFF2A3F6F)
-val LightGrayForm = Color(0xFFF0F0F0)
-val LightYellow = Color(0xFFFFF9C4)
+// Não precisamos mais de cores globais aqui
 
 @Composable
 fun SectionHeader(title: String) {
     Column {
         Spacer(modifier = Modifier.height(24.dp))
-        Text(text = title, style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
+        Text(
+            text = title,
+            style = MaterialTheme.typography.titleLarge,
+            fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colorScheme.onBackground // Usando cor do tema
+        )
         Spacer(modifier = Modifier.height(16.dp))
     }
 }
@@ -47,7 +49,12 @@ fun SingleChoiceSegment(
     onOptionSelected: (String) -> Unit
 ) {
     Column(modifier = Modifier.fillMaxWidth()) {
-        Text(title, fontWeight = FontWeight.SemiBold, style = MaterialTheme.typography.bodyLarge)
+        Text(
+            title,
+            fontWeight = FontWeight.SemiBold,
+            style = MaterialTheme.typography.bodyLarge,
+            color = MaterialTheme.colorScheme.onBackground // Usando cor do tema
+        )
         Spacer(modifier = Modifier.height(8.dp))
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             options.forEach { option ->
@@ -56,8 +63,9 @@ fun SingleChoiceSegment(
                     onClick = { onOptionSelected(option) },
                     shape = RoundedCornerShape(8.dp),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = if (isSelected) Color.DarkGray else LightGrayForm,
-                        contentColor = if (isSelected) Color.White else Color.Black
+                        // Usando cores do tema
+                        containerColor = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceVariant,
+                        contentColor = if (isSelected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurfaceVariant
                     ),
                     elevation = ButtonDefaults.buttonElevation(0.dp)
                 ) {
@@ -79,8 +87,9 @@ fun LargeTextField(value: String, onValueChange: (String) -> Unit, label: String
             .height(120.dp),
         shape = RoundedCornerShape(8.dp),
         colors = OutlinedTextFieldDefaults.colors(
-            unfocusedContainerColor = Color.White,
-            focusedContainerColor = Color.White
+            // Usando cores do tema
+            unfocusedContainerColor = MaterialTheme.colorScheme.surface,
+            focusedContainerColor = MaterialTheme.colorScheme.surface
         )
     )
     Spacer(modifier = Modifier.height(16.dp))
@@ -92,15 +101,21 @@ fun WarningBox() {
         modifier = Modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(8.dp))
-            .background(LightYellow)
+            .background(MaterialTheme.colorScheme.tertiaryContainer) // Usando cor do tema
             .padding(12.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Icon(imageVector = Icons.Default.Warning, contentDescription = "Aviso", tint = Color(0xFFFBC02D))
+        Icon(
+            imageVector = Icons.Default.Warning,
+            contentDescription = "Aviso",
+            tint = MaterialTheme.colorScheme.onTertiaryContainer // Usando cor do tema
+        )
         Spacer(modifier = Modifier.width(12.dp))
         Text(
             text = "Sua foto não será exibida se for identificada alguma suspeita de conteúdo sensível, impróprio ou fora das regras da plataforma.",
-            style = MaterialTheme.typography.bodySmall, lineHeight = 16.sp
+            style = MaterialTheme.typography.bodySmall,
+            lineHeight = 16.sp,
+            color = MaterialTheme.colorScheme.onTertiaryContainer // Usando cor do tema
         )
     }
 }
@@ -113,17 +128,26 @@ fun AddPhotoButton() {
             .height(80.dp)
             .clickable { /* TODO: Abrir galeria */ },
         shape = RoundedCornerShape(8.dp),
-        border = BorderStroke(1.dp, Color.LightGray),
-        colors = CardDefaults.cardColors(containerColor = Color.White)
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant) // Usando cor do tema
     ) {
         Row(
             modifier = Modifier.fillMaxSize(),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center
         ) {
-            Icon(Icons.Default.Add, contentDescription = "Adicionar Foto", tint = Color.Gray, modifier = Modifier.size(28.dp))
+            Icon(
+                Icons.Default.Add,
+                contentDescription = "Adicionar Foto",
+                tint = MaterialTheme.colorScheme.onSurfaceVariant, // Usando cor do tema
+                modifier = Modifier.size(28.dp)
+            )
             Spacer(modifier = Modifier.width(8.dp))
-            Text("Adicionar foto", color = Color.Gray, fontSize = 16.sp)
+            Text(
+                "Adicionar foto",
+                color = MaterialTheme.colorScheme.onSurfaceVariant, // Usando cor do tema
+                fontSize = 16.sp
+            )
         }
     }
 }
@@ -151,7 +175,10 @@ fun TermsAndConditionsCheckbox(checked: Boolean, onCheckedChange: (Boolean) -> U
         Checkbox(checked = checked, onCheckedChange = onCheckedChange)
         ClickableText(
             text = annotatedString,
-            style = MaterialTheme.typography.bodyMedium.copy(lineHeight = 20.sp),
+            style = MaterialTheme.typography.bodyMedium.copy(
+                lineHeight = 20.sp,
+                color = MaterialTheme.colorScheme.onBackground // Usando cor do tema
+            ),
             onClick = { offset ->
                 annotatedString.getStringAnnotations(tag = "TERMOS", start = offset, end = offset)
                     .firstOrNull()?.let { annotation -> uriHandler.openUri(annotation.item) }

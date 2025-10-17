@@ -1,3 +1,5 @@
+// Localização: ui/detalhes/PetDetailScreen.kt
+
 package com.example.cachorro.ui.detalhes
 
 import android.content.Context
@@ -16,7 +18,6 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -27,7 +28,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.cachorro.R
 import com.example.cachorro.data.local.model.Pet
 import com.example.cachorro.ui.formulario.PetViewModel
-import com.example.cachorro.ui.principal.DarkBlue
 import com.example.cachorro.ui.principal.getTempoFormatado
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -62,11 +62,10 @@ fun PetDetailScreen(
                     }) {
                         Icon(Icons.Default.Delete, contentDescription = "Deletar")
                     }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.White)
+                }
             )
         },
-        containerColor = Color(0xFFF7F7F7)
+        containerColor = MaterialTheme.colorScheme.surface // Usando cor do tema
     ) { paddingValues ->
         Column(
             modifier = Modifier
@@ -87,7 +86,7 @@ fun PetDetailScreen(
                 Card(
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(12.dp),
-                    colors = CardDefaults.cardColors(containerColor = Color.White)
+                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface) // Usando cor do tema
                 ) {
                     Row(
                         modifier = Modifier.padding(vertical = 8.dp, horizontal = 16.dp),
@@ -97,11 +96,15 @@ fun PetDetailScreen(
                         Text(
                             text = "Perdido ${getTempoFormatado(pet.createdAt)}",
                             fontWeight = FontWeight.Bold,
-                            color = DarkBlue,
+                            color = MaterialTheme.colorScheme.primary, // Usando cor do tema
                             modifier = Modifier.weight(1f)
                         )
                         IconButton(onClick = { /* TODO: Compartilhar */ }) {
-                            Icon(Icons.Default.Share, contentDescription = "Compartilhar", tint = DarkBlue)
+                            Icon(
+                                Icons.Default.Share,
+                                contentDescription = "Compartilhar",
+                                tint = MaterialTheme.colorScheme.primary // Usando cor do tema
+                            )
                         }
                     }
                 }
@@ -118,12 +121,21 @@ fun PetDetailScreen(
 
                 SectionDetail(title = "Onde eu perdi:") {
                     Row(verticalAlignment = Alignment.CenterVertically) {
-                        Icon(Icons.Default.LocationOn, contentDescription = null, tint = Color.Gray, modifier = Modifier.size(16.dp))
+                        Icon(
+                            Icons.Default.LocationOn,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant, // Usando cor do tema
+                            modifier = Modifier.size(16.dp)
+                        )
                         Spacer(modifier = Modifier.width(4.dp))
                         Text(pet.local, style = MaterialTheme.typography.bodyLarge)
                     }
                     Spacer(modifier = Modifier.height(8.dp))
-                    Text(pet.descricao, style = MaterialTheme.typography.bodyLarge, color = Color.DarkGray)
+                    Text(
+                        pet.descricao,
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant // Usando cor do tema
+                    )
                 }
 
                 Divider(modifier = Modifier.padding(vertical = 16.dp))
@@ -175,7 +187,11 @@ private fun RowScope.InfoColumn(vararg pairs: Pair<String, String>) {
     Column(modifier = Modifier.weight(1f)) {
         pairs.forEach { (label, value) ->
             Text(label, fontWeight = FontWeight.Bold, fontSize = 16.sp)
-            Text(value, fontSize = 16.sp, color = Color.DarkGray)
+            Text(
+                value,
+                fontSize = 16.sp,
+                color = MaterialTheme.colorScheme.onSurfaceVariant // Usando cor do tema
+            )
             Spacer(modifier = Modifier.height(8.dp))
         }
     }

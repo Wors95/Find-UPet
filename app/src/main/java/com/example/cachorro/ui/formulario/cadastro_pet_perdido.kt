@@ -44,6 +44,7 @@ fun PetPerdidoScreen(
                 navigationIcon = { IconButton(onClick = onNavigateBack) { Icon(Icons.AutoMirrored.Filled.ArrowBack, "Voltar") } }
             )
         },
+        containerColor = MaterialTheme.colorScheme.background // Usando cor do tema
     ) { paddingValues ->
         Column(
             modifier = Modifier
@@ -58,16 +59,16 @@ fun PetPerdidoScreen(
                 label = { Text("Nome") },
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(8.dp),
+                colors = OutlinedTextFieldDefaults.colors( // Usando cor do tema
+                    unfocusedContainerColor = MaterialTheme.colorScheme.surface,
+                    focusedContainerColor = MaterialTheme.colorScheme.surface
+                )
             )
             Spacer(Modifier.height(16.dp))
 
             SectionHeader("Informações básicas")
-            // --- CONECTANDO O SELETOR DE TIPO ---
             SingleChoiceSegment("Tipo de pet", listOf("Cachorro", "Gato"), uiState.tipo) { petViewModel.updateTipo(it) }
             SingleChoiceSegment("Sexo", listOf("Macho", "Fêmea", "Não sei"), uiState.sexo) { petViewModel.updateSexo(it) }
-
-            // ... O resto do arquivo continua exatamente igual ...
-            // (pode copiar e colar o resto do seu arquivo aqui se preferir)
 
             SectionHeader("Características físicas")
             SingleChoiceSegment("Idade", listOf("Filhote", "Adulto"), uiState.idade) { petViewModel.updateIdade(it) }
@@ -78,6 +79,10 @@ fun PetPerdidoScreen(
                 label = { Text("Raça") },
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(8.dp),
+                colors = OutlinedTextFieldDefaults.colors( // Usando cor do tema
+                    unfocusedContainerColor = MaterialTheme.colorScheme.surface,
+                    focusedContainerColor = MaterialTheme.colorScheme.surface
+                )
             )
             Spacer(Modifier.height(16.dp))
 
@@ -87,6 +92,10 @@ fun PetPerdidoScreen(
                 label = { Text("Cores do pet") },
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(8.dp),
+                colors = OutlinedTextFieldDefaults.colors( // Usando cor do tema
+                    unfocusedContainerColor = MaterialTheme.colorScheme.surface,
+                    focusedContainerColor = MaterialTheme.colorScheme.surface
+                )
             )
             Spacer(Modifier.height(16.dp))
 
@@ -97,6 +106,10 @@ fun PetPerdidoScreen(
                 label = { Text("Cidade") },
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(8.dp),
+                colors = OutlinedTextFieldDefaults.colors( // Usando cor do tema
+                    unfocusedContainerColor = MaterialTheme.colorScheme.surface,
+                    focusedContainerColor = MaterialTheme.colorScheme.surface
+                )
             )
             LargeTextField(
                 value = uiState.localDescricao,

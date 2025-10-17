@@ -32,11 +32,10 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.cachorro.R
 import com.example.cachorro.data.local.model.Pet
 import com.example.cachorro.ui.formulario.PetViewModel
+import com.example.cachorro.ui.theme.CachorroTheme
 import java.util.concurrent.TimeUnit
 
-val DarkBlue = Color(0xFF2A3F6F)
-val TealGreen = Color(0xFF00A99D)
-val LightGray = Color(0xFFF0F0F0)
+// Removendo as cores globais daqui. Elas agora vivem no tema.
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -47,10 +46,7 @@ fun EncontreSeuPetScreen(
 ) {
     var textoBusca by remember { mutableStateOf("") }
 
-    // --- MUDANÇAS AQUI ---
-    // A lista de pets agora vem da nova variável 'petsFiltrados'
     val pets by petViewModel.petsFiltrados.collectAsState()
-    // O filtro selecionado agora é controlado pelo ViewModel
     val filtroSelecionado by petViewModel.filtroSelecionado.collectAsState()
 
     Scaffold(
@@ -72,11 +68,11 @@ fun EncontreSeuPetScreen(
                     IconButton(onClick = { /* TODO */ }) {
                         Icon(imageVector = Icons.Default.Person, contentDescription = "Perfil")
                     }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.White)
+                }
+                // As cores agora são controladas pelo tema do Scaffold
             )
         },
-        containerColor = Color.White
+        containerColor = MaterialTheme.colorScheme.background // Usando cor do tema
     ) { paddingValues ->
         Column(
             modifier = Modifier
@@ -95,14 +91,12 @@ fun EncontreSeuPetScreen(
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(12.dp),
                     colors = OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = TealGreen,
-                        unfocusedBorderColor = Color.LightGray
+                        focusedBorderColor = MaterialTheme.colorScheme.secondary, // Usando cor do tema
+                        unfocusedBorderColor = MaterialTheme.colorScheme.outline
                     )
                 )
                 Spacer(modifier = Modifier.height(12.dp))
 
-                // --- MUDANÇA AQUI ---
-                // O FiltroPets agora chama a função do ViewModel
                 FiltroPets(
                     filtroSelecionado = filtroSelecionado,
                     onFiltroChange = { petViewModel.atualizarFiltro(it) }
@@ -139,8 +133,6 @@ fun EncontreSeuPetScreen(
         }
     }
 }
-// ... O resto do arquivo (BuscaHeader, FiltroPets, etc.) continua igual.
-// Colei o arquivo completo para garantir.
 
 @Composable
 private fun BuscaHeader() {
@@ -170,8 +162,8 @@ private fun FiltroPets(filtroSelecionado: String, onFiltroChange: (String) -> Un
                 onClick = { onFiltroChange(filtro) },
                 shape = RoundedCornerShape(8.dp),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = if (isSelected) TealGreen else LightGray,
-                    contentColor = if (isSelected) Color.White else Color.Gray
+                    containerColor = if (isSelected) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.surfaceVariant,
+                    contentColor = if (isSelected) MaterialTheme.colorScheme.onSecondary else MaterialTheme.colorScheme.onSurfaceVariant
                 ),
                 elevation = ButtonDefaults.buttonElevation(0.dp)
             ) {
@@ -193,7 +185,7 @@ private fun AcoesPrincipais(onPerdiMeuPetClick: () -> Unit, onViSeuPetClick: () 
                 .weight(1f)
                 .height(80.dp),
             shape = RoundedCornerShape(12.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = DarkBlue)
+            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary) // Usando cor do tema
         ) {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Icon(imageVector = Icons.Default.Warning, contentDescription = null)
@@ -207,7 +199,7 @@ private fun AcoesPrincipais(onPerdiMeuPetClick: () -> Unit, onViSeuPetClick: () 
                 .weight(1f)
                 .height(80.dp),
             shape = RoundedCornerShape(12.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = TealGreen)
+            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.secondary) // Usando cor do tema
         ) {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Icon(imageVector = Icons.Default.Search, contentDescription = null)
@@ -231,7 +223,7 @@ fun PetCard(pet: Pet, onVerDetalhesClick: () -> Unit) {
             .padding(vertical = 8.dp),
         shape = RoundedCornerShape(12.dp),
         elevation = CardDefaults.cardElevation(2.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White)
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface) // Usando cor do tema
     ) {
         ConstraintLayout(
             modifier = Modifier
@@ -257,7 +249,7 @@ fun PetCard(pet: Pet, onVerDetalhesClick: () -> Unit) {
             Button(
                 onClick = { onVerDetalhesClick() },
                 shape = RoundedCornerShape(8.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = DarkBlue),
+                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary), // Usando cor do tema
                 modifier = Modifier.constrainAs(button) {
                     end.linkTo(parent.end)
                     top.linkTo(parent.top)
@@ -291,35 +283,35 @@ fun PetCard(pet: Pet, onVerDetalhesClick: () -> Unit) {
                     )
                     Text(
                         text = getTempoFormatado(pet.createdAt),
-                        color = Color.Gray,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant, // Usando cor do tema
                         fontSize = 12.sp
                     )
                 }
                 Text(
                     text = pet.raca,
                     fontSize = 14.sp,
-                    color = Color.DarkGray,
+                    color = MaterialTheme.colorScheme.onSurface, // Usando cor do tema
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Icon(Icons.Default.Female, contentDescription = "Sexo", modifier = Modifier.size(16.dp), tint = Color.Gray)
+                    Icon(Icons.Default.Female, contentDescription = "Sexo", modifier = Modifier.size(16.dp), tint = MaterialTheme.colorScheme.onSurfaceVariant) // Usando cor do tema
                     Text(
                         text = pet.sexo,
                         fontSize = 14.sp,
-                        color = Color.Gray,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant, // Usando cor do tema
                         modifier = Modifier.padding(start = 4.dp),
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
                     )
                 }
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Icon(Icons.Default.LocationOn, contentDescription = "Local", modifier = Modifier.size(16.dp), tint = Color.Gray)
+                    Icon(Icons.Default.LocationOn, contentDescription = "Local", modifier = Modifier.size(16.dp), tint = MaterialTheme.colorScheme.onSurfaceVariant) // Usando cor do tema
                     Text(
                         text = pet.local,
                         fontSize = 14.sp,
-                        color = Color.Gray,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant, // Usando cor do tema
                         modifier = Modifier.padding(start = 4.dp),
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
@@ -350,7 +342,7 @@ fun getTempoFormatado(timestamp: Long): String {
 @Preview(showBackground = true)
 @Composable
 fun EncontreSeuPetScreenPreview() {
-    MaterialTheme {
+    CachorroTheme {
         EncontreSeuPetScreen(
             onNavigateToPetForm = {},
             onNavigateToPetDetail = {}
