@@ -1,4 +1,4 @@
-// Localização: data/local/model/pet.kt
+
 
 package com.example.cachorro.data.local.model
 
@@ -19,6 +19,6 @@ data class Pet(
     val idade: String,
     val descricao: String,
     val caracteristicas: List<String>,
-    val imageName: String,
+    val imageName: String, // <-- CORRIGIDO DE VOLTA PARA imageName
     val createdAt: Long = System.currentTimeMillis()
 )

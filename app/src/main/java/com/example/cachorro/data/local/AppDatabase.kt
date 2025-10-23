@@ -1,4 +1,4 @@
-// Localização: data/local/AppDatabase.kt
+
 
 package com.example.cachorro.data.local
 
@@ -7,13 +7,15 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
+import com.example.cachorro.data.local.model.Comment
 import com.example.cachorro.data.local.model.Pet
 
-@Database(entities = [Pet::class], version = 2) // <-- VERSÃO ATUALIZADA
+@Database(entities = [Pet::class, Comment::class], version = 3)
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
 
     abstract fun petDao(): PetDao
+    abstract fun commentDao(): CommentDao
 
     companion object {
         @Volatile
@@ -26,7 +28,7 @@ abstract class AppDatabase : RoomDatabase() {
                     AppDatabase::class.java,
                     "pet_database"
                 )
-                    .fallbackToDestructiveMigration() // <-- LINHA ADICIONADA
+                    .fallbackToDestructiveMigration()
                     .build()
                 INSTANCE = instance
                 instance
